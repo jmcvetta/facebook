@@ -1,5 +1,9 @@
 // Copyright 2012 Jason McVetta.  This is Free Software, released under the 
 // terms of the GNU Public License version 3.
+//
+// This code was inspired by Sunil Arora's Python implementation:
+// http://sunilarora.org/parsing-signedrequest-parameter-in-python-bas
+
 
 // Package facebook provides utilities for working with the Facebook API
 package facebook
@@ -7,6 +11,8 @@ package facebook
 import (
 	"encoding/base64"
 	"encoding/json"
+	"crypto/hmac"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"log"
@@ -33,9 +39,13 @@ type SignedRequest struct {
 }
 
 
-func base64UrlDecode(s string) ([]byte, error) {
+func pad(s string) string {
 	padding := (4 - len(s) % 4) % 4
-	s = s + strings.Repeat("=", padding)
+	return s + strings.Repeat("=", padding)
+}
+
+func base64UrlDecode(s string) ([]byte, error) {
+	s = pad(s)
 	b, err := base64.URLEncoding.DecodeString(s)
 	return b, err
 }
@@ -59,15 +69,18 @@ func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error)
 	encSig := l[0]
 	encPayload := l[1]
 	log.Println("encSig:", encSig)
+	//
 	// Decode signature
+	//
 	b, err := base64UrlDecode(encSig)
 	if err != nil {
 		return result, err
 	}
 	sig := string(b)
-	_ = sig
 	log.Println("encPayload:", encPayload)
+	//
 	// Decode payload
+	//
 	b, err = base64UrlDecode(encPayload)
 	if err != nil {
 		return result, err
@@ -76,5 +89,24 @@ func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error)
 	if err != nil {
 		return result, err
 	}
+	//
+	// Verify Signature
+	//
+	if strings.ToUpper(result.Algorithm) != "HMAC-SHA256" {
+		msg := fmt.Sprint("Unknown algorithm:", result.Algorithm)
+		err = errors.New(msg)
+		return result, err
+	}
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write([]byte(encPayload))
+	expectedSig := string(h.Sum([]byte{}))
+	if expectedSig != sig {
+		msg := fmt.Sprintf("Bad signature: expected '%v' but got '%v'.", expectedSig, encSig)
+		err = errors.New(msg)
+		return result, err
+	}
+	//
+	// Signature verified, return valid result
+	//
 	return result, err
 }
