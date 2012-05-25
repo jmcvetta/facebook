@@ -30,7 +30,7 @@ type SignedRequest struct {
 	Algorithm   string      // A JSON string containing the mechanism used to sign the request, normally: HMAC-SHA256.
 	Issued_At   int64       // A JSON number containing the Unix timestamp when the request was signed.
 	User_Id     string      // A JSON string containing the User ID of the current user.
-	User        interface{} // A JSON object containing the locale string, country string and the age object (containing the min and max number range of the age) for the current user.
+	User        map[string]interface{} // A JSON object containing the locale string, country string and the age object (containing the min and max number range of the age) for the current user.
 	Oauth_Token string      // A JSON string that can be used when making requests to the Graph API. This is also known as a user access token.
 	Expires     int64       // A JSON number containing the Unix timestamp when the oauth_token expires.
 	App_Data    string      // A JSON string containing the content of the app_data query string parameter which may be passed if the app is being loaded within a Page Tab.
