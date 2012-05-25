@@ -53,19 +53,18 @@ func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error)
 	var result SignedRequest
 	err = req.ParseMultipartForm(defaultMaxMemory)
 	if err != nil {
+		log.Println("Request Parse Error:", err)
 		return result, err
 	}
 	encSignedRequest := req.Form.Get("signed_request")
-	log.Println("encSignedRequest:", encSignedRequest)
 	l := strings.Split(encSignedRequest, ".")
 	if len(l) != 2 {
 		msg := fmt.Sprint("Could not split signed request into two parts.  It contains", len(l), "parts.")
-		err = errors.New(msg)
-		return result, err
+		log.Println(msg)
+		return result, errors.New(msg)
 	}
 	encSig := l[0]
 	encPayload := l[1]
-	log.Println("encSig:", encSig)
 	//
 	// Decode signature
 	//
@@ -74,16 +73,17 @@ func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error)
 		return result, err
 	}
 	sig := string(b)
-	log.Println("encPayload:", encPayload)
 	//
 	// Decode payload
 	//
 	b, err = base64UrlDecode(encPayload)
 	if err != nil {
+		log.Println("Base64 Decode Error:", err)
 		return result, err
 	}
 	err = json.Unmarshal(b, &result)
 	if err != nil {
+		log.Println("Unmarshal Error:", err)
 		return result, err
 	}
 	//
@@ -91,19 +91,20 @@ func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error)
 	//
 	if strings.ToUpper(result.Algorithm) != "HMAC-SHA256" {
 		msg := fmt.Sprint("Unknown algorithm:", result.Algorithm)
-		err = errors.New(msg)
-		return result, err
+		log.Println(msg)
+		return result, errors.New(msg)
 	}
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(encPayload))
 	expectedSig := string(h.Sum([]byte{}))
 	if expectedSig != sig {
-		msg := fmt.Sprintf("Bad signature: expected '%v' but got '%v'.", expectedSig, encSig)
-		err = errors.New(msg)
-		return result, err
+		msg := fmt.Sprintf("Bad signature: expected '%v' but got '%v'.", expectedSig, sig)
+		log.Println(msg)
+		return result, errors.New(msg)
 	}
 	//
 	// Signature verified, return valid result
 	//
+	log.Println("SignedRequest:", result)
 	return result, err
 }
