@@ -21,9 +21,9 @@ const (
 	exLocale      = "en_US"
 )
 
-// Example age can't be a constant because it's a map
-var exAge = map[string]int{
-	"min": 21,
+// Example age can't be a constant because it's a struct
+var exAge = Age{
+	Min: 21,
 }
 
 func TestParseSignedRequest(t *testing.T) {

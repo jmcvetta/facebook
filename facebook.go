@@ -23,20 +23,6 @@ const defaultMaxMemory = int64(1024 * 1024) // Max memory to use parsing request
 
 var SignedRequestParseError = errors.New("Could not parse Facebook signed_request")
 
-// User contains data about a Facebook user.
-type User struct {
-	Country string
-	Locale  string
-	Age     map[string]int
-}
-
-// Page contains data about the current Facebook page
-type Page struct {
-	Id    string
-	Liked bool
-	Admin bool
-}
-
 // SignedRequest is a Facebook data transfer structure.  See 
 // http://developers.facebook.com/docs/authentication/signed_request/ for crappy documentation.
 type SignedRequest struct {
@@ -49,6 +35,26 @@ type SignedRequest struct {
 	Expires     int64  // Unix timestamp when the oauth_token expires.
 	App_Data    string // content of the app_data query string parameter which may be passed if the app is being loaded within a Page Tab.
 	Page        Page
+}
+
+// User contains data about a Facebook user.
+type User struct {
+	Country string
+	Locale  string
+	Age     Age
+}
+
+// Age contains age data about a Facebook user.
+type Age struct {
+	Min int
+	Max int
+}
+
+// Page contains data about the current Facebook page
+type Page struct {
+	Id    string
+	Liked bool
+	Admin bool
 }
 
 func pad(s string) string {
