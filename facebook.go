@@ -26,14 +26,14 @@ var SignedRequestParseError = errors.New("Could not parse Facebook signed_reques
 // SignedRequest is a Facebook data transfer structure.  See 
 // http://developers.facebook.com/docs/authentication/signed_request/ for crappy documentation.
 type SignedRequest struct {
-	Code        string // An OAuth Code which can be exchanged for a valid user access token via a subsequent server-side request
-	Algorithm   string // mechanism used to sign the request, normally: HMAC-SHA256.
-	Issued_At   int64  // Unix timestamp when the request was signed.
-	User_Id     string // User ID of the current user.
+	Code        string // OAuth Code - can be exchanged for user access token via subsequent request
+	Algorithm   string // mechanism used to sign the request
+	Issued_At   int64  // Unix timestamp when the request was signed
+	User_Id     string // User ID of the current user
 	User        User
-	Oauth_Token string // used when making requests to the Graph API. This is also known as a user access token.
-	Expires     int64  // Unix timestamp when the oauth_token expires.
-	App_Data    string // content of the app_data query string parameter which may be passed if the app is being loaded within a Page Tab.
+	Oauth_Token string // user access token - used when making requests to the Graph API
+	Expires     int64  // Unix timestamp when the oauth_token expires
+	App_Data    string // app_data query parameter - may be passed if app is loaded within Page Tab
 	Page        Page
 }
 
