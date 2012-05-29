@@ -23,24 +23,32 @@ const defaultMaxMemory = int64(1024 * 1024) // Max memory to use parsing request
 
 var SignedRequestParseError = errors.New("Could not parse Facebook signed_request")
 
-type FbUser struct {
+// User contains data about a Facebook user.
+type User struct {
 	Country string
 	Locale  string
 	Age     map[string]int
 }
 
+// Page contains data about the current Facebook page
+type Page struct {
+	Id    string
+	Liked bool
+	Admin bool
+}
+
 // SignedRequest is a Facebook data transfer structure.  See 
 // http://developers.facebook.com/docs/authentication/signed_request/ for crappy documentation.
 type SignedRequest struct {
-	Code        string      // An OAuth Code which can be exchanged for a valid user access token via a subsequent server-side request
-	Algorithm   string      // A JSON string containing the mechanism used to sign the request, normally: HMAC-SHA256.
-	Issued_At   int64       // A JSON number containing the Unix timestamp when the request was signed.
-	User_Id     string      // A JSON string containing the User ID of the current user.
-	User        FbUser      // A JSON object containing the locale string, country string and the age object (containing the min and max number range of the age) for the current user.
-	Oauth_Token string      // A JSON string that can be used when making requests to the Graph API. This is also known as a user access token.
-	Expires     int64       // A JSON number containing the Unix timestamp when the oauth_token expires.
-	App_Data    string      // A JSON string containing the content of the app_data query string parameter which may be passed if the app is being loaded within a Page Tab.
-	Page        interface{} // A JSON object containing the page id string, the liked boolean (set to true if the user has liked the page, false if not) and the admin boolean (set to true if the user is an admin of the page, false if they're not). This field is only present if your app is being loaded within a Page Tab.
+	Code        string // An OAuth Code which can be exchanged for a valid user access token via a subsequent server-side request
+	Algorithm   string // mechanism used to sign the request, normally: HMAC-SHA256.
+	Issued_At   int64  // Unix timestamp when the request was signed.
+	User_Id     string // User ID of the current user.
+	User        User
+	Oauth_Token string // used when making requests to the Graph API. This is also known as a user access token.
+	Expires     int64  // Unix timestamp when the oauth_token expires.
+	App_Data    string // content of the app_data query string parameter which may be passed if the app is being loaded within a Page Tab.
+	Page        Page
 }
 
 func pad(s string) string {

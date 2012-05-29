@@ -8,17 +8,17 @@ import (
 
 // Credentials used to generate the sample signed_request
 const (
-	appId         = "281740555255031"
-	appSecret     = "1ca84b341a334ab02260c32471f51937"
+	appId     = "281740555255031"
+	appSecret = "1ca84b341a334ab02260c32471f51937"
 )
 
 // Example signed_request
-const(
+const (
 	signedRequest = "MpUWdfoWdnCfj7SW0rs_b0jKAasq_XUjUtCy68woYo4.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTMzNzkwNTUzOCwidXNlciI6eyJjb3VudHJ5IjoidXMiLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX19"
-	exAlgo          = "HMAC-SHA256"
-	exIssuedAt      = int64(1337905538)
-	exCountry       = "us"
-	exLocale        = "en_US"
+	exAlgo        = "HMAC-SHA256"
+	exIssuedAt    = int64(1337905538)
+	exCountry     = "us"
+	exLocale      = "en_US"
 )
 
 // Example age can't be a constant because it's a map
