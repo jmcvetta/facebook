@@ -68,6 +68,9 @@ func base64UrlDecode(s string) ([]byte, error) {
 	return b, err
 }
 
+// Parses an HTTP request containing a Facebook-style signed_request parameter
+//
+// secret is the Facebook App Secret for the application receiving this request
 func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error) {
 	var err error
 	var result SignedRequest
