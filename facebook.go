@@ -74,12 +74,7 @@ func base64UrlDecode(s string) ([]byte, error) {
 func ParseSignedRequest(req *http.Request, secret string) (SignedRequest, error) {
 	var err error
 	var result SignedRequest
-	err = req.ParseMultipartForm(defaultMaxMemory)
-	if err != nil {
-		log.Println("Request Parse Error:", err)
-		return result, err
-	}
-	encSignedRequest := req.Form.Get("signed_request")
+	encSignedRequest := req.FormValue("signed_request")
 	l := strings.Split(encSignedRequest, ".")
 	if len(l) != 2 {
 		msg := fmt.Sprint("Could not split signed request into two parts.  It contains", len(l), "parts.")
